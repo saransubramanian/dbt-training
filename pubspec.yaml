@@ -1,0 +1,55 @@
+name: protekfm
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI Dependencies
+  curved_navigation_bar: ^1.0.6  
+  fl_chart: ^0.63.0  
+
+  # State Management & Navigation
+  flutter_bloc: ^8.1.3  
+  go_router: ^12.1.3  
+
+  # Image Handling
+  image_picker: ^1.0.7  
+
+  # Splash Screen
+  flutter_native_splash: ^2.3.2  
+
+  # Date Picker
+  intl: ^0.18.1  
+  calendar_date_picker2: ^1.1.9  
+
+  # Country Picker
+  country_picker: ^2.0.27
+
+  # Reminders Plugin (Correct Placement)
+  reminders: ^1.1.0  # Replace with the actual latest version from pub.dev
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/black-textured-wallpaper.png
+    - assets/images/logo.png
+
+# ✅ Corrected Splash Screen Configuration
+flutter_native_splash:
+  android: true
+  ios: true
+  image: assets/images/logo.png
+  background_image: assets/images/black-textured-wallpaper.png
