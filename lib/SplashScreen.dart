@@ -21,7 +21,7 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 10), () {
-      // Navigate to SigninPage after 10 seconds      .3
+      // Navigate to SigninPage after 10 seconds
 
       Navigator.pushReplacement(
         context,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,25 +12,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const CreateaccountPage(),
+      home: const CreateAccountPage(),
     );
   }
 }
 
-class CreateaccountPage extends StatefulWidget {
-  const CreateaccountPage({super.key});
+class CreateAccountPage extends StatefulWidget {
+  const CreateAccountPage({super.key});
 
   @override
-  State<CreateaccountPage> createState() => _CreateaccountPageState();
+  State<CreateAccountPage> createState() => _CreateAccountPageState();
 }
 
-class _CreateaccountPageState extends State<CreateaccountPage> {
+class _CreateAccountPageState extends State<CreateAccountPage> {
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  String countryCode = ""; // To store the selected country code
 
   void _signUp() {
     String firstname = _firstnameController.text.trim();
@@ -37,10 +40,12 @@ class _CreateaccountPageState extends State<CreateaccountPage> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
+    String phone = _phoneController.text.trim();
 
     if (firstname.isEmpty ||
         lastname.isEmpty ||
         email.isEmpty ||
+        phone.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,9 +61,8 @@ class _CreateaccountPageState extends State<CreateaccountPage> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CreateaccountPage()),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Account Created Successfully!")),
     );
   }
 
@@ -76,8 +80,8 @@ class _CreateaccountPageState extends State<CreateaccountPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset("assets/images/logo.png", width: 200),
-                const SizedBox(height: 20),
+                Image.asset("assets/images/logo.png", width: 150),
+                const SizedBox(height: 3),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   padding: const EdgeInsets.all(16),
@@ -126,6 +130,21 @@ class _CreateaccountPageState extends State<CreateaccountPage> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text("Mobile Number",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      IntlPhoneField(
+                        controller: _phoneController,
+                        decoration: InputDecoration(
+                          hintText: "Enter your phone number",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        initialCountryCode: 'IN', // Default country (India)
+                        onChanged: (phone) {
+                          countryCode = phone.countryCode;
+                        },
                       ),
                       const SizedBox(height: 10),
                       const Text("Password",

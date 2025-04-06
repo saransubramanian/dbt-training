@@ -1,14 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.protekfm">
 
     <!-- ✅ Correct placement of permissions -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SET_ALARM"/>
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- ✅ Moved inside <manifest> -->
+
+    <!-- ✅ Biometric & Fingerprint Permissions -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false"/>
 
     <application
         android:label="ProTekfm"
-        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
         <activity

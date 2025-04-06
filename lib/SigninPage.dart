@@ -70,7 +70,7 @@ class _SigninPageState extends State<SigninPage> {
               children: [
                 Image.asset(
                   "assets/images/logo.png",
-                  width: 200,
+                  width: 150,
                 ),
                 const SizedBox(height: 20),
                 Container(
