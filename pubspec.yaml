@@ -63,9 +63,6 @@ dependencies:
   # ✅ Vibration Feedback
   vibration: ^1.7.6
 
-  # ✅ App Version Information
-  package_info_plus: ^8.3.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

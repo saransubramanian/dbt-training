@@ -8,7 +8,6 @@ import 'package:vibration/vibration.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
@@ -258,6 +257,8 @@ class ChangePasswordPage extends StatefulWidget {
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   void _changePassword() async {
@@ -288,6 +289,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   controller: _newPasswordController,
                   obscureText: true,
                   decoration: InputDecoration(labelText: "New Password")),
+              TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: "Confirm Password"),
+                  validator: (value) {
+                    if (value != _newPasswordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  }),
               SizedBox(height: 20),
               ElevatedButton(
                   onPressed: _changePassword, child: Text("Change Password")),
@@ -381,7 +392,33 @@ class DeleteAccountPage extends StatelessWidget {
   }
 }
 
-// --------------------- Theme Mode Page ---------------------
+// Placeholder for App Version Page
+class AppVersionPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("App Version")),
+      body: Center(
+        child: Text("App Version: 1.0.0"),
+      ),
+    );
+  }
+}
+
+// Placeholder for Check For Updates Page
+class CheckForUpdatesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Check for Updates")),
+      body: Center(
+        child: Text("Checking for updates..."),
+      ),
+    );
+  }
+}
+
+//--------------------- Theme Mode Page ---------------------
 class ThemeModePage extends StatefulWidget {
   final Function(bool) onThemeChanged;
 
@@ -539,7 +576,6 @@ class SoundVibrationSettingsPage extends StatefulWidget {
 
 class _SoundVibrationSettingsPageState
     extends State<SoundVibrationSettingsPage> {
-  // Initialize variables to ensure they are never null
   bool _soundEnabled = true; // Default to true
   bool _vibrationEnabled = true; // Default to true
 
@@ -552,7 +588,6 @@ class _SoundVibrationSettingsPageState
   Future<void> _loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Use null-coalescing operator to provide a default value
       _soundEnabled = prefs.getBool('soundEnabled') ?? true; // Default to true
       _vibrationEnabled =
           prefs.getBool('vibrationEnabled') ?? true; // Default to true
@@ -655,7 +690,6 @@ class _DefaultDashboardViewPageState extends State<DefaultDashboardViewPage> {
   Future<void> _saveDashboardView(String view) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultDashboardView', view);
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text("Default dashboard set to $view"),
@@ -973,18 +1007,16 @@ class _AutoAssignTicketsPageState extends State<AutoAssignTicketsPage> {
     setState(() {
       tickets.add({
         "Ticket ID": "TICKET-${tickets.length + 1}",
-        "Assigned To": assignedAgent
+        "Assigned To": assignedAgent,
       });
       currentAgentIndex =
           (currentAgentIndex + 1) % agents.length; // Round-robin assignment
       _saveTickets();
     });
 
-    Future.delayed(Duration(milliseconds: 100), () {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Ticket assigned to $assignedAgent"),
-          duration: Duration(seconds: 2)));
-    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Ticket assigned to $assignedAgent"),
+        duration: Duration(seconds: 2)));
   }
 
   void _clearTickets() async {
@@ -1084,6 +1116,8 @@ class _PriorityNotificationSettingsPageState
   Future<void> _savePriority(String priority) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('notificationPriority', priority);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Notification priority set to $priority")));
   }
 
   @override
@@ -1146,9 +1180,6 @@ class _PriorityNotificationSettingsPageState
                 ),
                 onPressed: () {
                   _savePriority(_selectedPriority);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          "Notification Priority set to $_selectedPriority")));
                 },
                 child: Text("Save",
                     style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -1307,7 +1338,9 @@ class _CloudBackupPageState extends State<CloudBackupPage> {
           await _firestore.collection("backups").doc(user.uid).get();
       if (snapshot.exists) {
         setState(() {
-          _backupData = snapshot.data().toString(); // Use safe fallback
+          _backupData = snapshot.data() != null
+              ? snapshot.data().toString()
+              : "No data found"; // Use safe fallback
         });
         _showSnackbar("Data restored successfully!");
       } else {
@@ -1375,8 +1408,8 @@ class _SyncDevicesPageState extends State<SyncDevicesPage> {
   bool _isSyncing = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _getUserId();
   }
 
@@ -1475,104 +1508,6 @@ class _SyncDevicesPageState extends State<SyncDevicesPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// --------------------- App Version Page ---------------------
-class AppVersionPage extends StatefulWidget {
-  @override
-  _AppVersionPageState createState() => _AppVersionPageState();
-}
-
-class _AppVersionPageState extends State<AppVersionPage> {
-  String _version = "Loading...";
-  String _buildNumber = "Loading...";
-
-  @override
-  void initState() {
-    super.initState();
-    _getAppVersion();
-  }
-
-  Future<void> _getAppVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    setState(() {
-      _version = packageInfo.version;
-      _buildNumber = packageInfo.buildNumber;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text("App Version"), backgroundColor: Colors.blueAccent),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Version: $_version",
-                style: TextStyle(fontSize: 20, color: Colors.blue.shade700)),
-            Text("Build Number: $_buildNumber",
-                style: TextStyle(fontSize: 18, color: Colors.blue.shade600)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// --------------------- Check for Update Page ---------------------
-class CheckForUpdatesPage extends StatefulWidget {
-  @override
-  _CheckForUpdatesPageState createState() => _CheckForUpdatesPageState();
-}
-
-class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
-  bool _isChecking = false;
-
-  Future<void> _checkForUpdates() async {
-    setState(() {
-      _isChecking = true;
-    });
-
-    await Future.delayed(Duration(seconds: 2)); // Simulating API request delay
-
-    bool updateAvailable = _checkVersion(); // Simulated version check
-
-    setState(() {
-      _isChecking = false;
-    });
-
-    if (updateAvailable) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("A new version is available. Please update the app.")));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Your app is up to date!")));
-    }
-  }
-
-  bool _checkVersion() {
-    String currentVersion = "1.0.0"; // Get dynamically in real apps
-    String latestVersion = "1.1.0"; // Fetch this from an API
-
-    return latestVersion != currentVersion;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Check for Updates")),
-      body: Center(
-        child: _isChecking
-            ? CircularProgressIndicator()
-            : ElevatedButton(
-                onPressed: _checkForUpdates,
-                child: Text("Check for Updates"),
-              ),
       ),
     );
   }

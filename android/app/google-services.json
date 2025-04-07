@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171580278396",
+    "project_id": "protekfm-55afb",
+    "storage_bucket": "protekfm-55afb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171580278396:android:04e9cb67a28cfd852eabf9",
+        "android_client_info": {
+          "package_name": "com.example.protekfm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEEQyoucFAvq3jLZM1qWPy6tWRzG9jJRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
